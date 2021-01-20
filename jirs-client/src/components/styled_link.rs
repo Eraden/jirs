@@ -8,6 +8,7 @@ pub struct StyledLink<'l> {
     children: Vec<Node<Msg>>,
     class_list: Vec<&'l str>,
     href: &'l str,
+    disabled: bool,
 }
 
 impl<'l> StyledLink<'l> {
@@ -21,6 +22,7 @@ pub struct StyledLinkBuilder<'l> {
     children: Vec<Node<Msg>>,
     class_list: Vec<&'l str>,
     href: &'l str,
+    disabled: bool,
 }
 
 impl<'l> StyledLinkBuilder<'l> {
@@ -44,6 +46,11 @@ impl<'l> StyledLinkBuilder<'l> {
         self
     }
 
+    pub fn disabled(mut self) -> Self {
+        self.disabled = true;
+        self
+    }
+
     pub fn text(self, s: &'l str) -> Self {
         self.add_child(span![s])
     }
@@ -53,6 +60,7 @@ impl<'l> StyledLinkBuilder<'l> {
             children: self.children,
             class_list: self.class_list,
             href: self.href,
+            disabled: self.disabled,
         }
     }
 }
@@ -68,11 +76,14 @@ pub fn render(values: StyledLink) -> Node<Msg> {
         children,
         class_list,
         href,
+        disabled,
     } = values;
 
-    let on_click = {
+    let on_click = if disabled {
+        None
+    } else {
         let href = href.to_string();
-        mouse_ev("click", move |ev| {
+        Some(mouse_ev("click", move |ev| {
             if href.starts_with('/') {
                 ev.prevent_default();
                 ev.stop_propagation();
@@ -82,7 +93,7 @@ pub fn render(values: StyledLink) -> Node<Msg> {
             }
 
             None as Option<Msg>
-        })
+        }))
     };
 
     a![
@@ -91,6 +102,7 @@ pub fn render(values: StyledLink) -> Node<Msg> {
             At::Class => class_list.join(" "),
             At::Href => href,
         ],
+        IF![disabled => attrs![At::OnClick => "return false"]],
         on_click,
         children,
     ]

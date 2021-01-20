@@ -1,5 +1,4 @@
 #![feature(async_closure)]
-#![feature(vec_remove_item)]
 #![recursion_limit = "256"]
 
 use {

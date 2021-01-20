@@ -1,0 +1,135 @@
+#issuesAndFilters {
+    display: block;
+
+    > .container {
+        display: flex;
+        justify-content: space-between;
+
+        --listWidth: 338px;
+
+        > .issueInfo {
+            width: calc(100% - var(--listWidth));
+            padding: {
+                left: 10px;
+                right: 10px;
+                top: 5px;
+                bottom: 5px;
+            };
+
+            > .header {
+                display: grid;
+                grid-template-areas: "icon link" "icon name";
+                grid-template-columns: 48px;
+
+                > .logo {
+                    width: 48px;
+                }
+
+                > .path {
+                    display: flex;
+                    justify-content: space-between;
+
+                    > .styledLink {
+                        color: var(--textLink);
+
+                        > span {
+                            color: var(--textLink);
+                        }
+                    }
+                }
+
+                > .title {
+                }
+            }
+
+            > .issueBody {
+                display: flex;
+
+                > .details {
+                    list-style: none;
+
+                    > .line {
+                        --lineWidth: 460px;
+                        --nameWidth: 150px;
+
+                        list-style: none;
+                        width: var(--lineWidth);
+                        display: flex;
+                        justify-content: space-between;
+                        padding: {
+                            top: 2px;
+                            bottom: 2px;
+                            left: 5px;
+                            right: 5px;
+                        };
+                        font-size: 14px;
+
+                        > .detailsTitle {
+                            color: var(--textLight);
+                            width: var(--nameWidth);
+                            font-size: 14px;
+                        }
+
+                        > .detailsValue {
+                            width: calc(var(--lineWidth) - var(--nameWidth));
+                            font-size: 14px;
+                        }
+                    }
+                }
+            }
+        }
+
+        > .issuesList {
+            width: var(--listWidth);
+            list-style: none;
+
+            > .listItem {
+                list-style: none;
+
+                > .issue {
+                    display: grid;
+                    grid-template-areas: "type number" "priority name";
+                    grid-template-columns: 32px auto;
+                    border: {
+                        bottom: 1px solid var(--borderLight);
+                    }
+                    padding: {
+                        left: 10px;
+                        right: 10px;
+                        top: 5px;
+                        bottom: 5px;
+                    };
+                    cursor: pointer;
+
+                    &.active {
+                        background-color: var(--backgroundLightPrimary);
+                    }
+
+                    &:hover {
+                        background-color: var(--backgroundLightest);
+
+                        &.active {
+                            background-color: var(--backgroundLightPrimary);
+                        }
+                    }
+
+                    > .type {
+                        grid-area: type;
+                    }
+
+                    > .number {
+                        grid-area: number;
+                    }
+
+                    > .priority {
+                        grid-area: priority;
+                    }
+
+                    > .name {
+                        grid-area: name;
+                    }
+                }
+            }
+        }
+    }
+}

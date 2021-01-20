@@ -107,6 +107,9 @@ pub enum Msg {
     AddIssue,
     DeleteIssue(EpicId),
 
+    // issues and filters
+    SetActiveIssue(Option<IssueId>),
+
     // epics
     AddEpic,
     DeleteEpic,
@@ -250,6 +253,7 @@ fn update(msg: Msg, model: &mut model::Model, orders: &mut impl Orders<Msg>) {
         Page::Users => pages::users_page::update(msg, model, orders),
         Page::Profile => pages::profile_page::update(msg, model, orders),
         Page::Reports => pages::reports_page::update(msg, model, orders),
+        Page::IssuesAndFilters => pages::issues_and_filters::update(msg, model, orders),
     }
     if cfg!(features = "print-model") {
         log!(model);
@@ -270,6 +274,7 @@ fn view(model: &model::Model) -> Node<Msg> {
         Page::Users => pages::users_page::view(model),
         Page::Profile => pages::profile_page::view(model),
         Page::Reports => pages::reports_page::view(model),
+        Page::IssuesAndFilters => pages::issues_and_filters::view(model),
     }
 }
 
@@ -285,6 +290,7 @@ fn resolve_page(url: Url) -> Option<Page> {
             Some(Ok(id)) => Page::EditIssue(id),
             _ => return None,
         },
+        "issues-and-filters" => Page::IssuesAndFilters,
         "add-issue" => Page::AddIssue,
         "project-settings" => Page::ProjectSettings,
         "login" => Page::SignIn,

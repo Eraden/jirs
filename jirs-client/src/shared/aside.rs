@@ -57,7 +57,12 @@ pub fn render(model: &Model) -> Node<Msg> {
             project_settings(model),
             li![divider()],
             sidebar_link_item(model, "Releases", Icon::Shipping, None),
-            sidebar_link_item(model, "Issue and Filters", Icon::Issues, None),
+            sidebar_link_item(
+                model,
+                "Issue and Filters",
+                Icon::Issues,
+                Some(Page::IssuesAndFilters)
+            ),
             sidebar_link_item(model, "Pages", Icon::Page, None),
             sidebar_link_item(model, "Reports", Icon::Reports, Some(Page::Reports)),
             sidebar_link_item(model, "Components", Icon::Component, None),

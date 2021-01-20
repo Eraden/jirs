@@ -77,7 +77,16 @@ pub fn render(model: &Model) -> Vec<Node<Msg>> {
         vec![]
     } else {
         vec![
-            navbar_left_item("Search issues", Icon::Search, None, None),
+            navbar_left_item(
+                "Search issues",
+                Icon::Search,
+                Some("/issues-and-filters"),
+                Some(mouse_ev("click", |ev| {
+                    ev.stop_propagation();
+                    ev.prevent_default();
+                    Msg::ChangePage(Page::IssuesAndFilters)
+                })),
+            ),
             navbar_left_item(
                 "Create Issue",
                 Icon::Plus,

@@ -163,7 +163,10 @@ pub fn update(msg: WsMsg, model: &mut Model, orders: &mut impl Orders<Msg>) {
 
         // issue statuses
         WsMsg::IssueStatusesLoaded(v) => {
-            model.issue_statuses = v;
+            model.issue_statuses = v.clone();
+            for is in v {
+                model.issue_statuses_by_id.insert(is.id, is);
+            }
             model
                 .issue_statuses
                 .sort_by(|a, b| a.position.cmp(&b.position));
@@ -175,7 +178,8 @@ pub fn update(msg: WsMsg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         }
         WsMsg::IssueStatusCreated(is) => {
             let id = is.id;
-            model.issue_statuses.push(is);
+            model.issue_statuses.push(is.clone());
+            model.issue_statuses_by_id.insert(is.id, is);
             model
                 .issue_statuses
                 .sort_by(|a, b| a.position.cmp(&b.position));
@@ -187,6 +191,9 @@ pub fn update(msg: WsMsg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         }
         WsMsg::IssueStatusUpdated(mut changed) => {
             let id = changed.id;
+            model
+                .issue_statuses_by_id
+                .insert(changed.id, changed.clone());
             if let Some(idx) = model.issue_statuses.iter().position(|c| c.id == changed.id) {
                 std::mem::swap(&mut model.issue_statuses[idx], &mut changed);
             }
@@ -200,8 +207,8 @@ pub fn update(msg: WsMsg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             ));
         }
         WsMsg::IssueStatusDeleted(dropped_id, _count) => {
-            let mut old = vec![];
-            std::mem::swap(&mut model.issue_statuses, &mut old);
+            model.issue_statuses_by_id.remove(&dropped_id);
+            let old = std::mem::replace(&mut model.issue_statuses, vec![]);
             for is in old {
                 if is.id != dropped_id {
                     model.issue_statuses.push(is);

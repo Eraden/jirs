@@ -12,7 +12,7 @@ use {
     jirs_data::*,
     seed::{app::Orders, browser::web_socket::WebSocket},
     serde::{Deserialize, Serialize},
-    std::collections::hash_map::HashMap,
+    std::{borrow::Cow, collections::hash_map::HashMap},
     uuid::Uuid,
 };
 
@@ -83,23 +83,25 @@ pub enum Page {
     Users,
     Profile,
     Reports,
+    IssuesAndFilters,
 }
 
 impl Page {
-    pub fn to_path(self) -> String {
+    pub fn to_path(self) -> std::borrow::Cow<'static, str> {
         match self {
-            Page::Project => "/board".to_string(),
-            Page::DeleteEpic(id) => format!("/delete-epic/{id}", id = id),
-            Page::EditEpic(id) => format!("/edit-epic/{id}", id = id),
-            Page::EditIssue(id) => format!("/issues/{id}", id = id),
-            Page::AddIssue => "/add-issue".to_string(),
-            Page::ProjectSettings => "/project-settings".to_string(),
-            Page::SignIn => "/login".to_string(),
-            Page::SignUp => "/register".to_string(),
-            Page::Invite => "/invite".to_string(),
-            Page::Users => "/users".to_string(),
-            Page::Profile => "/profile".to_string(),
-            Page::Reports => "/reports".to_string(),
+            Page::Project => Cow::Borrowed("/board"),
+            Page::DeleteEpic(id) => Cow::Owned(format!("/delete-epic/{id}", id = id)),
+            Page::EditEpic(id) => Cow::Owned(format!("/edit-epic/{id}", id = id)),
+            Page::EditIssue(id) => Cow::Owned(format!("/issues/{id}", id = id)),
+            Page::AddIssue => Cow::Borrowed("/add-issue"),
+            Page::ProjectSettings => Cow::Borrowed("/project-settings"),
+            Page::SignIn => Cow::Borrowed("/login"),
+            Page::SignUp => Cow::Borrowed("/register"),
+            Page::Invite => Cow::Borrowed("/invite"),
+            Page::Users => Cow::Borrowed("/users"),
+            Page::Profile => Cow::Borrowed("/profile"),
+            Page::Reports => Cow::Borrowed("/reports"),
+            Page::IssuesAndFilters => Cow::Borrowed("/issues-and-filters"),
         }
     }
 }
@@ -137,9 +139,12 @@ impl Default for InvitationFormState {
 #[macro_export]
 macro_rules! match_page {
     ($model: ident, $ty: ident) => {
+        $crate::match_page!($model, $ty, ())
+    };
+    ($model: ident, $ty: ident, $ret: expr) => {
         match &$model.page_content {
-            PageContent::$ty(page) => page,
-            _ => return,
+            $crate::model::PageContent::$ty(page) => page,
+            _ => return $ret,
         }
     };
 }
@@ -163,6 +168,7 @@ pub enum PageContent {
     Users(Box<UsersPage>),
     Profile(Box<ProfilePage>),
     Reports(Box<ReportsPage>),
+    IssuesAndFilters(Box<crate::pages::issues_and_filters::Model>),
 }
 
 #[derive(Debug)]

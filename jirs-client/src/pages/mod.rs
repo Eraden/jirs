@@ -1,4 +1,5 @@
 pub mod invite_page;
+pub mod issues_and_filters;
 pub mod profile_page;
 pub mod project_page;
 pub mod project_settings_page;
